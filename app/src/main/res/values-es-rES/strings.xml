@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ListaCompra</string>
+    <string name="action_settings">Configuraciones</string>
+    <string name="btn_positive_create">Crear</string>
+    <string name="btn_negative_">Cancelar</string>
+    <string name="nombre_producto">Nombre Producto</string>
+    <string name="create_title">Crear Producto</string>
+    <string name="cantidad_producto">Cantidad de Producto</string>
+    <string name="precio_producto">Precio de Producto</string>
+</resources>

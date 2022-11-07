@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:ems="10"
-        android:hint="Producto"
+        android:hint="@string/nombre_producto"
         android:inputType="textPersonName" />
 
     <EditText
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:ems="10"
-        android:hint="Cantidad"
+        android:hint="@string/cantidad_producto"
         android:inputType="number" />
 
     <EditText
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:ems="10"
-        android:hint="Precio"
+        android:hint="@string/precio_producto"
         android:inputType="numberDecimal" />
 
     <TextView

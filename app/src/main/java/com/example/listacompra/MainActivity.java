@@ -1,6 +1,7 @@
 package com.example.listacompra;
 
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import com.example.listacompra.adapters.ProductosAdapters;
@@ -41,9 +42,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
 
+        //Orientacion del movil
+        //getResources().getConfiguration().orientation
+        //PORTRAIT --> VERTICAL
+        //LANDSCAPE --> HORIZONTAL
+
+        int columnas;
+        columnas = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT ? 1 : 2;
+
         productos = new ArrayList<>();
-        adapter = new ProductosAdapters(productos, R.layout.producto_view_holder,this);
-        layoutManager = new GridLayoutManager(this,1);
+        adapter = new ProductosAdapters(productos, R.layout.producto_view_holder, this);
+        layoutManager = new GridLayoutManager(this,columnas);
         binding.conteinMain.Contenedor.setAdapter(adapter);
         binding.conteinMain.Contenedor.setLayoutManager(layoutManager);
 
@@ -58,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AlertDialog createProducto() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Nuevo Producto a la lista");
+        builder.setTitle(getString(R.string.create_title));
         builder.setCancelable(false);
 
         View productoView = LayoutInflater.from(this).inflate(R.layout.producto_view_alert, null);
@@ -86,8 +95,9 @@ public class MainActivity extends AppCompatActivity {
                     float precio = Float.parseFloat(txtPrecio.getText().toString());
                     //Formatear numerows en cadenas
                     NumberFormat numberFormat = NumberFormat.getCurrencyInstance();
-                    lbTotal.setText(numberFormat.format(cantidad*precio));
-                } catch (NumberFormatException ex) {}
+                    lbTotal.setText(numberFormat.format(cantidad * precio));
+                } catch (NumberFormatException ex) {
+                }
 
             }
         };
@@ -95,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
         txtCantidad.addTextChangedListener(textWatcher);
         txtPrecio.addTextChangedListener(textWatcher);
 
-        builder.setNegativeButton("CANCELAR", null);
-        builder.setPositiveButton("CREAR", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getResources().getString(R.string.btn_negative_), null);
+        builder.setPositiveButton(getResources().getString(R.string.btn_positive_create), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (!txtNombre.getText().toString().isEmpty() && !txtCantidad.getText().toString().isEmpty() && !txtPrecio.getText().toString().isEmpty()) {
@@ -105,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                             Integer.parseInt(txtCantidad.getText().toString()),
                             Float.parseFloat(txtPrecio.getText().toString())
                     );
-                    productos.add(0,producto);
+                    productos.add(0, producto);
                     adapter.notifyItemInserted(0);
                 }
             }
@@ -116,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("PRODUCTOS",productos);
+        outState.putSerializable("PRODUCTOS", productos);
     }
 
     @Override
@@ -124,6 +134,6 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         ArrayList<Producto> temp = (ArrayList<Producto>) savedInstanceState.getSerializable("PRODUCTOS");
         productos.addAll(temp);
-        adapter.notifyItemRangeInserted(0,productos.size());
+        adapter.notifyItemRangeInserted(0, productos.size());
     }
 }
