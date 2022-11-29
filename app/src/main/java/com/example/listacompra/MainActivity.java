@@ -1,10 +1,12 @@
 package com.example.listacompra;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
 import com.example.listacompra.adapters.ProductosAdapters;
+import com.example.listacompra.modelos.Constantes;
 import com.example.listacompra.modelos.Producto;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -22,9 +24,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.listacompra.databinding.ActivityMainBinding;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ProductosAdapters adapter;
     private RecyclerView.LayoutManager layoutManager;
+
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +60,13 @@ public class MainActivity extends AppCompatActivity {
 
         productos = new ArrayList<>();
         adapter = new ProductosAdapters(productos, R.layout.producto_view_holder, this);
-        layoutManager = new GridLayoutManager(this,columnas);
+        layoutManager = new GridLayoutManager(this, columnas);
         binding.conteinMain.Contenedor.setAdapter(adapter);
         binding.conteinMain.Contenedor.setLayoutManager(layoutManager);
 
+        SharedPreferences sharedPreferences = getSharedPreferences(Constantes.LISTA, MODE_PRIVATE);
+
+        cargarDatos();
 
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +74,16 @@ public class MainActivity extends AppCompatActivity {
                 createProducto().show();
             }
         });
+    }
+
+    private void cargarDatos() {
+        if (sharedPreferences.contains(Constantes.LISTAPERSISTENTE)) {
+            String json = sharedPreferences.getString(Constantes.LISTAPERSISTENTE, "");
+            Type type = new TypeToken<ArrayList<Producto>>() {
+            }.getType();
+            List<Producto> listProductos = new Gson().fromJson(json, type);
+            productos.addAll(listProductos);
+        }
     }
 
     private AlertDialog createProducto() {
@@ -117,10 +138,23 @@ public class MainActivity extends AppCompatActivity {
                     );
                     productos.add(0, producto);
                     adapter.notifyItemInserted(0);
+                    guardar();
                 }
             }
         });
         return builder.create();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        guardar();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        guardar();
     }
 
     @Override
@@ -135,5 +169,13 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Producto> temp = (ArrayList<Producto>) savedInstanceState.getSerializable("PRODUCTOS");
         productos.addAll(temp);
         adapter.notifyItemRangeInserted(0, productos.size());
+    }
+
+    public void guardar() {
+        SharedPreferences sharedPreferences = getSharedPreferences(Constantes.LISTA, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String json = new Gson().toJson(productos);
+        editor.putString(Constantes.LISTAPERSISTENTE, json);
+        editor.apply();
     }
 }

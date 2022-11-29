@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.listacompra.BuildConfig;
+import com.example.listacompra.MainActivity;
 import com.example.listacompra.R;
 import com.example.listacompra.modelos.Producto;
 
@@ -29,11 +30,13 @@ public class ProductosAdapters extends RecyclerView.Adapter<ProductosAdapters.Pr
     private List<Producto> objects;
     private int resource;
     private Context context;
+    private MainActivity mainActivity;
 
     public ProductosAdapters(List<Producto> objects, int resource, Context context) {
         this.objects = objects;
         this.resource = resource;
         this.context = context;
+        this.mainActivity = (MainActivity) context;
     }
 
     @NonNull
@@ -110,6 +113,7 @@ public class ProductosAdapters extends RecyclerView.Adapter<ProductosAdapters.Pr
             public void onClick(DialogInterface dialogInterface, int i) {
                 objects.remove(producto);
                 notifyItemRemoved(adapterPosition);
+                mainActivity.guardar();
             }
         });
 
@@ -170,6 +174,7 @@ public class ProductosAdapters extends RecyclerView.Adapter<ProductosAdapters.Pr
                     producto.setPrecio(Float.parseFloat(txtPrecio.getText().toString()));
                     producto.updateTotal();
                     notifyItemChanged(adapterPosition);
+                    mainActivity.guardar();
                 }
             }
         });

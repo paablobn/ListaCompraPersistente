@@ -9,6 +9,9 @@ public class Producto implements Serializable {
     private float precio;
     private float total;
 
+    public Producto() {
+    }
+
     public Producto(String nombre, int cantidad, float precio) {
         this.nombre = nombre;
         this.cantidad = cantidad;
